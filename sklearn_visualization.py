@@ -34,8 +34,7 @@ def main():
     #eout = get_err(U, V, Y_test)
     #print(eout)
 
-    projection = get_projected(V)
-    movies = V.dot(projection.transpose())
+    movies = get_projected(V).transpose()
     data = np.loadtxt('data/data.txt')
     movies_dict = get_movies_dict(data)
     pop_ids = np.array(get_popular_ids(movies_dict)).astype(int)
@@ -78,14 +77,34 @@ def main():
         x = to_display_pop[:,0][i]
         y = to_display_pop[:,1][i]
         plt.scatter(x, y, marker='x', color='red')
-        plt.text(x+0.3, y+0.3, names[id-1], fontsize=9)
+        plt.text(x, y, names[id-1], fontsize=9)
     plt.show()
 
     for i,id in enumerate(best_ids):
         x = to_display_best[:,0][i]
         y = to_display_best[:,1][i]
         plt.scatter(x, y, marker='o', color='blue')
-        plt.text(x+0.3, y+0.3, names[id], fontsize=9)
+        plt.text(x, y, names[id-1], fontsize=9)
+    plt.show()
+
+    star_wars = [50, 172, 181]
+    star_trek = [222, 227, 228, 229, 230, 380, 449, 450]
+    other = [135, 204, 271, 343, 434, 176, 183, 665]
+    for i,id in enumerate(star_wars):
+        x = movies[id-1,0]
+        y = movies[id-1,1]
+        plt.scatter(x, y, marker='x', color='red')
+        plt.text(x, y, names[id-1], fontsize=9)
+    for i,id in enumerate(star_trek):
+        x = movies[id-1,0]
+        y = movies[id-1,1]
+        plt.scatter(x, y, marker='o', color='blue')
+        plt.text(x, y, names[id-1], fontsize=9)
+    for i,id in enumerate(other):
+        x = movies[id-1,0]
+        y = movies[id-1,1]
+        plt.scatter(x, y, marker='o', color='green')
+        plt.text(x, y, names[id-1], fontsize=9)
     plt.show()
 
 if __name__ == "__main__":

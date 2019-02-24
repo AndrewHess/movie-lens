@@ -74,6 +74,23 @@ def show_genres(genres):
     return
 
 
+def get_genre(genre):
+    genre_index = {'unknown': 1, 'action': 2, 'adventure': 3, 'animation': 4,
+                   'childrens': 5, 'comedy': 6, 'crime': 7, 'documentary': 8,
+                   'drama': 9, 'fantasy': 10, 'film-noir': 11, 'horror': 12,
+                   'musical': 13, 'mystery': 14, 'romance': 15, 'sci-fi': 16,
+                   'thriller': 17, 'war': 18, 'western': 19}
+
+    # Load the file that maps movie IDs to their genres and the ratings file.
+    movie_genres = np.loadtxt('data/movies.txt', delimiter='\t', encoding='latin1', usecols=[0] + list(range(2, 21)))
+    all_data = np.loadtxt('data/data.txt')
+    movie_ids = []
+    for movie in movie_genres:
+        if movie[1 + genre_index[genre]] == 1:
+            movie_ids.append(int(movie[0]))
+    return movie_ids
+
+
 def get_movies_dict(data):
     '''
     Get dictionary of movies where key is id, number of ratings and sum of
@@ -95,7 +112,9 @@ def get_movies_dict(data):
     return dict
 
 
-def get_popular_ids(movies_dict):
+def get_popular_ids(movies_dict, genre = None):
+    if genre != None:
+        movies_dict = dict(zip(get_genre(genre), map(movies_dict.get, get_genre(genre))))
     sorted_by_popular = sorted(movies_dict.items(), key=lambda x: x[1][0], reverse = True)
     popular = sorted_by_popular[:10]
 

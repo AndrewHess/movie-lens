@@ -1,4 +1,6 @@
 import numpy as np
+import numpy as np
+import matplotlib.pyplot as plt
 
 def grad_U(Ui, Yij, Vj, reg, eta):
     """
@@ -79,3 +81,15 @@ def get_projected(V):
     A, S, B = np.linalg.svd(V,full_matrices=False)
     print(A.shape,V.shape)
     return (A[:,:2].transpose()).dot(V)
+
+def draw_projection(projected, ids):
+    colors = ['red','blue','green','yellow','orange','purple','black']
+    data = np.loadtxt('data/data.txt')
+    names = np.genfromtxt('data/movies.txt', delimiter='\t', encoding='latin1', usecols=[1],dtype='str')
+    for ic,c in enumerate(ids):
+        for i,id in enumerate(c):
+            x = projected[id-1][0]
+            y = projected[id-1][1]
+            plt.scatter(x, y, marker='x', color=colors[ic % len(colors)])
+            plt.text(x, y, names[id-1], fontsize=9)
+    plt.show()
