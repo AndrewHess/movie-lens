@@ -66,7 +66,7 @@ def show_genres(genres):
         movie_ids = []
 
         for movie in movie_genres:
-            if movie[1 + genre_index[genre]] == 1:
+            if movie[genre_index[genre]] == 1:
                 movie_ids.append(int(movie[0]))
 
         make_hist(all_data[movie_ids][:, 2], title=genre)
@@ -86,10 +86,27 @@ def get_genre(genre):
     all_data = np.loadtxt('data/data.txt')
     movie_ids = []
     for movie in movie_genres:
-        if movie[1 + genre_index[genre]] == 1:
+        if movie[genre_index[genre]] == 1:
             movie_ids.append(int(movie[0]))
     return movie_ids
 
+
+def get_under_year(year):
+    movie_dates = np.loadtxt('data/movies.txt', delimiter='\t', encoding='latin1', usecols=[0,1], dtype=str)
+    movie_ids = []
+    for movie in movie_dates:
+        for i in range(1900,year + 1, 1):
+            if movie[1].find(str(i)) != -1:
+                movie_ids.append(int(movie[0]))
+    return movie_ids
+
+def get_year(year):
+    movie_dates = np.loadtxt('data/movies.txt', delimiter='\t', encoding='latin1', usecols=[0,1], dtype=str)
+    movie_ids = []
+    for movie in movie_dates:
+        if movie[1].find(str(year)) != -1:
+            movie_ids.append(int(movie[0]))
+    return movie_ids
 
 def get_movies_dict(data):
     '''
@@ -112,9 +129,11 @@ def get_movies_dict(data):
     return dict
 
 
-def get_popular_ids(movies_dict, genre = None, n = 10):
+def get_popular_ids(movies_dict, genre = None, n = 10, ids = None):
     if genre != None:
         movies_dict = dict(zip(get_genre(genre), map(movies_dict.get, get_genre(genre))))
+    if ids != None:
+        movies_dict = dict(zip(ids, map(movies_dict.get, ids)))
     sorted_by_popular = sorted(movies_dict.items(), key=lambda x: x[1][0], reverse = True)
     popular = sorted_by_popular[:n]
 

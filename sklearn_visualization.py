@@ -8,16 +8,21 @@ from scipy.signal import savgol_filter
 #from sklearn.decomposition import NMF
 import surprise as sp
 
+from scipy.sparse import csc_matrix
+from scipy.sparse.linalg import svds, eigs
+
 def main():
     reader = sp.Reader(line_format='user item rating', sep='\t')
 
     #folds_files = [('data/train.txt','data/test.txt')]
     folds_files = [('data/train_ghost.txt','data/test.txt')]
-    
+
     data = sp.Dataset.load_from_folds(folds_files, reader=reader)
     pkf = sp.model_selection.PredefinedKFold()
     Y_train, Y_test = next(pkf.split(data))
+    print(Y_train.n_users, Y_train.n_items, Y_train.n_ratings)
 
+    Y_test2 = np.loadtxt('data/test.txt').astype(int)
     #M = max(max(Y_train[:,0]), max(Y_test[:,0])).astype(int) # users
     #N = max(max(Y_train[:,1]), max(Y_test[:,1])).astype(int) # movies
 
@@ -30,12 +35,14 @@ def main():
     eps = 0.0001
 
     #U,V, err = train_model(M, N, K, eta, reg, Y_train)
-    model = sp.prediction_algorithms.matrix_factorization.NMF(n_factors = K, n_epochs = 100, reg_pu = 0.1, reg_qi = 0.1)
+    model = sp.prediction_algorithms.matrix_factorization.SVD(n_factors = K, n_epochs = 100, reg_all = reg, verbose=True, biased = False, lr_all = eta, init_std_dev = 0.5)
     model.fit(Y_train)
     U = model.pu
     V = model.qi
+
+    print(get_err(U, V, Y_test2))
     predictions = model.test(Y_test)
-    print(sp.accuracy.rmse(predictions) ** 2)
+    print(sp.accuracy.rmse(predictions))
     #eout = get_err(U, V, Y_test)
     #print(eout)
 

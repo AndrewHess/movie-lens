@@ -157,15 +157,30 @@ def draw_projection(projected, ids, title = None):
 
     plt.show()
 
-def get_predicted_rating(U, V, id):
-    total = 0
-    m = V[id - 1]
-    for r in U:
-        total += m.dot(r.transpose())
-    return total/len(U)
+def get_predicted_rating(U, V, id, mu = None, a = None, b = None):
+    if mu == None:
+        total = 0
+        m = V[id - 1]
+        for r in U:
+            total += m.dot(r.transpose())
+        return total/len(U)
+    else:
+        total = 0
+        m = V[id - 1]
+        for i in range(len(U)):
+            total += (mu + b[id - 1] + a[i] + m.dot(U[i].transpose()))
+        return total/len(U)
 
-def get_average_predicted(U, V, ids):
+def get_average_predicted(U, V, ids, mu = None, a = None, b = None):
     total = 0
     for id in ids:
-        total += get_predicted_rating(U, V, id)
+        total += get_predicted_rating(U, V, id, mu, a, b)
     return total/len(ids)
+
+def get_average_location(V, ids):
+    avgx = 0
+    avgy = 0
+    for id in ids:
+        avgx += V[id-1][0]
+        avgy += V[id-1][1]
+    return [avgx/len(ids), avgy/len(ids)]
