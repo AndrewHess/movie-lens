@@ -112,11 +112,11 @@ def get_movies_dict(data):
     return dict
 
 
-def get_popular_ids(movies_dict, genre = None):
+def get_popular_ids(movies_dict, genre = None, n = 10):
     if genre != None:
         movies_dict = dict(zip(get_genre(genre), map(movies_dict.get, get_genre(genre))))
     sorted_by_popular = sorted(movies_dict.items(), key=lambda x: x[1][0], reverse = True)
-    popular = sorted_by_popular[:10]
+    popular = sorted_by_popular[:n]
 
     popular_ids = []
     for m in popular:
@@ -126,9 +126,9 @@ def get_popular_ids(movies_dict, genre = None):
     return popular_ids
 
 
-def get_best_ids(movies_dict):
+def get_best_ids(movies_dict, n = 10):
     sorted_by_best = sorted(movies_dict.items(), key=lambda x: (x[1][1])/(x[1][0]), reverse = True)
-    best = sorted_by_best[:10]
+    best = sorted_by_best[:n]
 
     best_ids = []
     for m in best:
@@ -141,6 +141,13 @@ def get_best_ids(movies_dict):
 def vis_by_ids(data, ids, title=None):
     sorted = data[np.logical_or.reduce([data[:,1] == id for id in ids])]
     make_hist(sorted[:,2], title)
+
+def get_average_ratings(movies_dict, ids):
+    total = 0
+    for id in ids:
+        (num_ratings, total_rating) = movies_dict[id]
+        total += (total_rating/num_ratings)
+    return total/len(ids)
 
 if __name__ == '__main__':
     main()

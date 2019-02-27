@@ -141,7 +141,7 @@ def get_projected(V):
     print(A.shape,V.shape)
     return (A[:,:2].transpose()).dot(V)
 
-def draw_projection(projected, ids):
+def draw_projection(projected, ids, title = None):
     colors = ['red','blue','green','yellow','orange','purple','black']
     data = np.loadtxt('data/data.txt')
     names = np.genfromtxt('data/movies.txt', delimiter='\t', encoding='latin1', usecols=[1],dtype='str')
@@ -151,4 +151,21 @@ def draw_projection(projected, ids):
             y = projected[id-1][1]
             plt.scatter(x, y, marker='x', color=colors[ic % len(colors)])
             plt.text(x, y, names[id-1], fontsize=9)
+
+    if title:
+        plt.title(title)
+
     plt.show()
+
+def get_predicted_rating(U, V, id, bias, a, b, mu):
+    total = 0
+    m = V[id - 1]
+    for r in U:
+        total += m.dot(r.transpose())
+    return total/len(U)
+
+def get_average_predicted(U, V, ids, bias, a, b, mu):
+    total = 0
+    for id in ids:
+        total += get_predicted_rating(U, V, id)
+    return total/len(ids)
