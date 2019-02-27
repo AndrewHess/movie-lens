@@ -11,7 +11,9 @@ import surprise as sp
 def main():
     reader = sp.Reader(line_format='user item rating', sep='\t')
 
-    folds_files = [('data/train.txt','data/test.txt')]
+    #folds_files = [('data/train.txt','data/test.txt')]
+    folds_files = [('data/train_ghost.txt','data/test.txt')]
+    
     data = sp.Dataset.load_from_folds(folds_files, reader=reader)
     pkf = sp.model_selection.PredefinedKFold()
     Y_train, Y_test = next(pkf.split(data))
@@ -37,7 +39,7 @@ def main():
     #eout = get_err(U, V, Y_test)
     #print(eout)
 
-    movies = get_projected(V).transpose()
+    movies = get_projected(V.transpose()).transpose()
     data = np.loadtxt('data/data.txt')
     movies_dict = get_movies_dict(data)
     pop_ids = np.array(get_popular_ids(movies_dict)).astype(int)
