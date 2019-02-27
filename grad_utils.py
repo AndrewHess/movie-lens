@@ -157,14 +157,14 @@ def draw_projection(projected, ids, title = None):
 
     plt.show()
 
-def get_predicted_rating(U, V, id, bias, a, b, mu):
+def get_predicted_rating(U, V, id):
     total = 0
     m = V[id - 1]
     for r in U:
         total += m.dot(r.transpose())
     return total/len(U)
 
-def get_average_predicted(U, V, ids, bias, a, b, mu):
+def get_average_predicted(U, V, ids):
     total = 0
     for id in ids:
         total += get_predicted_rating(U, V, id)
