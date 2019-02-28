@@ -48,7 +48,7 @@ def grad_ai(Ui, Yij, Vj, ai, bj, mu, reg, eta):
     Returns the gradient of the regularized loss function with respect to ai
     multiplied by eta.
     """
-    return eta * (reg * ai + (Yij - mu - Ui.transpose().dot(Vj) - ai - bj))
+    return eta * (reg * ai - (Yij - mu - Ui.transpose().dot(Vj) - ai - bj))
 
 def grad_bj(Vj, Yij, Ui, ai, bj, mu, reg, eta):
     """
@@ -60,7 +60,7 @@ def grad_bj(Vj, Yij, Ui, ai, bj, mu, reg, eta):
     Returns the gradient of the regularized loss function with respect to bj
     multiplied by eta.
     """
-    return eta * (reg * bj + (Yij - mu - Ui.transpose().dot(Vj) - ai - bj))
+    return eta * (reg * bj - (Yij - mu - Ui.transpose().dot(Vj) - ai - bj))
 
 def get_err(U, V, Y, reg=0.0, a=None, b=None, mu=None):
     """
