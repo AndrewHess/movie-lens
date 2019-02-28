@@ -87,6 +87,18 @@ def get_err(U, V, Y, reg=0.0, a=None, b=None, mu=None):
 
     return (r_term + l_term) / 2 / len(Y)
 
+def get_RMSE(U, V, Y, a=None, b=None, mu=None):
+    """ implements root mean square error """
+    l_term = None
+
+    if a is None or b is None or mu is None:
+        # no bias
+        l_arr = np.array([(Yij - U[i-1].transpose().dot(V[j-1])) ** 2 for i, j, Yij in Y])
+    else:
+        l_arr = np.array([(Yij - mu - U[i-1].transpose().dot(V[j-1]) - a[i-1] - b[j-1]) ** 2 for i, j, Yij in Y])
+
+    return np.sqrt(np.mean(l_arr))
+
 def train_model(M, N, K, eta, reg, Y, eps=0.0001, max_epochs=300, bias=False):
     """
     Given a training data matrix Y containing rows (i, j, Y_ij)

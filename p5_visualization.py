@@ -2,7 +2,7 @@ import numpy as np
 import sys
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter, MaxNLocator
-from grad_utils import train_model, get_err, get_projected, draw_projection, get_average_predicted, get_average_location
+from grad_utils import train_model, get_err, get_projected, draw_projection, get_average_predicted, get_average_location, get_RMSE
 from basic_visualization import get_popular_ids, get_best_ids, get_movies_dict, get_average_ratings, get_year, get_under_year
 from scipy.signal import savgol_filter
 from matplotlib.animation import FuncAnimation
@@ -66,15 +66,21 @@ def make_years_plot(movies, movies_dict, names):
         plt.xlim(min_x, max_x)
         plt.ylim(min_y, max_y)
         plt.title("Average movie: <" + str(max_year))
-        plt.savefig("f" + str(max_year), dpi=96)
+        plt.savefig("years_plot/f" + str(max_year), dpi=96)
         plt.clf()
         plt.gca()
 
 def main():
     # Check the command line arguments if for bias should be used.
-    bias = (len(sys.argv) == 2 and sys.argv[1] == '-bias')
+    bias = (len(sys.argv) >= 2 and '-bias' in sys.argv)
+    rmse = (len(sys.argv) >= 2 and '-rmse' in sys.argv)
+    if (len(sys.argv) >= 2 and '-h' in sys.argv or '-help' in sys.argv):
+        print("python3 p5_visualization.py -bias -rmse -help")
+        sys.exit(0)
+
 
     print('using bias:', bias)
+    print('using rmse:', rmse)
 
     Y_train = np.loadtxt('data/train.txt').astype(int)
     Y_test = np.loadtxt('data/test.txt').astype(int)
@@ -98,6 +104,17 @@ def main():
 
     eout = get_err(U, V, Y_test, a=a, b=b, mu=mu) if bias else get_err(U, V, Y_test)
     print(err, eout)
+
+    if (rmse):
+        print("rmse error: ")
+        if(bias):
+            print("ein: " + str(get_RMSE(U, V, Y_train, a=a, b=b, mu=mu)))
+            print("eout: " + str(get_RMSE(U, V, Y_test, a=a, b=b, mu=mu)))
+        else:
+            print("ein: " + str(get_RMSE(U, V, Y_train)))
+            print("eout: " + str(get_RMSE(U, V, Y_test)))
+
+
     movies = get_projected(V.transpose()).transpose()
     data = np.loadtxt('data/data.txt')
     movies_dict = get_movies_dict(data)
